@@ -1,8 +1,14 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\{
+    LandController,
+    CropController,
+    CycleController,
+    WarehouseController
+};
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::apiResource('lands', LandController::class);
+Route::apiResource('crops', CropController::class);
+Route::apiResource('cycles', CycleController::class);
+Route::apiResource('warehouses', WarehouseController::class);
