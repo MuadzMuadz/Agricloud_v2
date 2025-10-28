@@ -2,7 +2,13 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\{
+    AuthController,
+    LandController,
+    CropController,
+    CycleController,
+    WarehouseController
+};
 use App\Http\Controllers\Admin\UserController;
 
 Route::prefix('auth')->group(function () {
@@ -35,3 +41,8 @@ Route::prefix('auth')->group(function () {
         Route::get('/roles', [UserController::class, 'roles']);
     });
 });
+
+Route::apiResource('lands', LandController::class);
+Route::apiResource('crops', CropController::class);
+Route::apiResource('cycles', CycleController::class);
+Route::apiResource('warehouses', WarehouseController::class);
