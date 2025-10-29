@@ -2,18 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
-<<<<<<< HEAD
-=======
     AuthController,
->>>>>>> 99373cb737a48033aed895cda11b7d9a2f7ece9b
     LandController,
     CropController,
     CycleController,
     WarehouseController
 };
-<<<<<<< HEAD
 
-=======
 use App\Http\Controllers\Admin\UserController;
 
 Route::prefix('auth')->group(function () {
@@ -47,7 +42,6 @@ Route::prefix('auth')->group(function () {
     });
 });
 
->>>>>>> 99373cb737a48033aed895cda11b7d9a2f7ece9b
 Route::apiResource('lands', LandController::class);
 Route::apiResource('crops', CropController::class);
 Route::apiResource('cycles', CycleController::class);
