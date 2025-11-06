@@ -3,9 +3,10 @@ namespace App\Http\Controllers;
 
 use App\Services\WarehouseService;
 use App\Models\Warehouse;
-use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
+use App\ApiResponse;
 use Illuminate\Support\Facades\Gate;
+use App\Http\Requests\WarehouseRequest;
+use App\Http\Resources\WarehouseResource;
 
 class WarehouseController extends Controller
 {
@@ -16,45 +17,51 @@ class WarehouseController extends Controller
     public function index()
     {
         $data = $this->service->listForOwner();
-        return $this->success($data, 'List of warehouses');
+        return $this->success(WarehouseResource::collection($data), 'List of warehouses');
     }
-
-    public function store(Request $request)
+    public function store(WarehouseRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:150',
-            'location' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-        ]);
+        $data = $request->validated();
 
-        $warehouse = $this->service->create($validated);
-        return $this->success($warehouse, 'Warehouse created successfully', 201);
+        if ($request->hasFile('image')) {
+            $imageUrl = $this->service->handleImageUpload($request, $data['name']);
+            $data['image_url'] = $imageUrl;
+        }
+
+        $warehouse = $this->service->create($data);
+        return $this->success(new WarehouseResource($warehouse), 'Warehouse created successfully');
     }
+    
 
     public function show(Warehouse $warehouse)
     {
         Gate::authorize('view', $warehouse);
         $detail = $this->service->getDetail($warehouse);
-        return $this->success($detail, 'Warehouse detail');
+        return $this->success(new WarehouseResource($detail), 'Warehouse details');
     }
 
-    public function update(Request $request, Warehouse $warehouse)
+    public function update(WarehouseRequest $request, Warehouse $warehouse)
     {
         Gate::authorize('update', $warehouse);
 
-        $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:150',
-            'location' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-        ]);
+        $data = $request->validated();
 
-        $updated = $this->service->update($warehouse, $validated);
+        if ($request->hasFile('image')) {
+            $data['image_url'] = $this->service->handleImageUpload(
+                $request,
+                $data['name'] ?? $warehouse->name,
+                $warehouse->image_url
+            );
+        }
+
+        $updated = $this->service->update($warehouse, $data);
         return $this->success($updated, 'Warehouse updated successfully');
     }
 
     public function destroy(Warehouse $warehouse)
     {
         Gate::authorize('delete', $warehouse);
+
         $this->service->delete($warehouse);
         return $this->success([], 'Warehouse deleted successfully');
     }

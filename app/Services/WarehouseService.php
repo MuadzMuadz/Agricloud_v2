@@ -3,6 +3,8 @@ namespace App\Services;
 
 use App\Models\Warehouse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class WarehouseService
 {
@@ -45,5 +47,24 @@ class WarehouseService
     public function getDetailForAdmin($id)
     {
         return Warehouse::with(['user', 'items.movements'])->findOrFail($id);
+    }
+
+    public function handleImageUpload($request, $warehouseName, $oldImageUrl = null): ?string
+    {
+        $user = Auth::user();
+        $userDir = "user/{$user->username}_{$user->id}/warehouses";
+        $filename = Str::slug($warehouseName) . '.' . $request->file('image')->getClientOriginalExtension();
+
+        // Hapus file lama kalau ada
+        if ($oldImageUrl) {
+            $oldPath = str_replace('/storage/', 'public/', $oldImageUrl);
+            if (Storage::exists($oldPath)) {
+                Storage::delete($oldPath);
+            }
+        }
+
+        // Simpan file baru
+        $path = $request->file('image')->storeAs($userDir, $filename, 'public');
+        return Storage::url($path);
     }
 }
