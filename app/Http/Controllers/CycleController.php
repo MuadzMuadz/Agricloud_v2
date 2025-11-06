@@ -1,90 +1,107 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Cycle, Crop, Phase};
-use App\Services\CycleService;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Models\{Cycle, Crop, Phase, Land};
+use Illuminate\Support\Facades\Auth;
 
 class CycleController extends Controller
 {
-    use AuthorizesRequests;
-
-    protected $service;
-
-    public function __construct(CycleService $service)
+    // 🔹 GET - Semua cycle milik farmer login
+    public function index()
     {
-        $this->service = $service;
-    }
+        $user = Auth::user();
 
-    // 🔹 List semua cycle milik farmer
-    public function index(Request $request)
-    {
-        $cycles = Cycle::with(['crop', 'phases', 'land'])
-            ->whereHas('land', fn($q) => $q->where('user_id', $request->user()->id))
+        $cycles = Cycle::with(['Crop', 'Phases', 'Land'])
+            ->whereHas('Land', function ($q) use ($user) {
+                $q->where('farmer_id', $user->id);
+            })
             ->latest()
             ->get();
 
-        return response()->json($cycles);
+        return response()->json($cycles, 200);
     }
 
-    // 🔹 Detail 1 cycle (hanya milik sendiri)
-    public function show(Cycle $cycle)
+    // 🔹 GET by ID - Detail cycle tertentu
+    public function show($id)
     {
-        $this->authorize('view', $cycle);
+        $cycle = Cycle::with(['Crop', 'Phases', 'Land'])->find($id);
 
-        return response()->json(
-            $cycle->load(['crop.stages', 'phases', 'land'])
-        );
+        if (!$cycle) {
+            return response()->json(['message' => 'Data siklus tidak ditemukan'], 404);
+        }
+
+        return response()->json($cycle, 200);
     }
 
-    // 🔹 Buat cycle baru (auto-generate phases)
+    // 🔹 POST - Tambah cycle baru
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'land_id' => 'required|exists:lands,id',
-            'crop_id' => 'required|exists:crops,id',
+            'land_id' => 'required|integer|exists:lands,id',
+            'crop_id' => 'required|integer|exists:crops,id',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'start_date' => 'required|date',
+            'end_date' => 'nullable|date',
+            'status_id' => 'nullable|integer',
         ]);
 
-        $cycle = $this->service->createCycleWithPhases($validated, $request->user());
+        $cycle = Cycle::create($validated);
 
         return response()->json([
-            'message' => 'Cycle created successfully',
-            'data' => $cycle->load('phases'),
+            'message' => 'Data siklus berhasil ditambahkan!',
+            'data' => $cycle
         ], 201);
     }
 
-    // 🔹 Update data cycle
-    public function update(Request $request, Cycle $cycle)
+    // 🔹 PUT - Update data cycle
+    public function update(Request $request, $id)
     {
-        $this->authorize('update', $cycle);
+        $cycle = Cycle::find($id);
 
-        $cycle->update($request->only(['status', 'start_date', 'end_date']));
+        if (!$cycle) {
+            return response()->json(['message' => 'Data siklus tidak ditemukan'], 404);
+        }
+
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'start_date' => 'sometimes|date',
+            'end_date' => 'nullable|date',
+            'status_id' => 'nullable|integer',
+        ]);
+
+        $cycle->update($validated);
 
         return response()->json([
-            'message' => 'Cycle updated successfully',
-            'data' => $cycle,
-        ]);
+            'message' => 'Data siklus berhasil diperbarui!',
+            'data' => $cycle
+        ], 200);
     }
 
-    // 🔹 Hapus cycle (soft delete)
-    public function destroy(Cycle $cycle)
+    // 🔹 DELETE - Hapus cycle
+    public function destroy($id)
     {
-        $this->authorize('delete', $cycle);
+        $cycle = Cycle::find($id);
+
+        if (!$cycle) {
+            return response()->json(['message' => 'Data siklus tidak ditemukan'], 404);
+        }
 
         $cycle->delete();
 
-        return response()->json(['message' => 'Cycle deleted successfully']);
+        return response()->json(['message' => 'Data siklus berhasil dihapus!'], 200);
     }
 
-    // 🔹 List cycle per land
+    // 🔹 GET - Daftar cycle berdasarkan lahan
     public function listByLand($landId)
     {
-        $cycles = Cycle::with(['crop', 'phases'])
+        $cycles = Cycle::with(['Crop', 'Phases'])
             ->where('land_id', $landId)
-            ->whereHas('land', fn($q) => $q->where('user_id', auth()->guard()->id()))
             ->get();
 
-        return response()->json($cycles);
+        return response()->json($cycles, 200);
     }
 }

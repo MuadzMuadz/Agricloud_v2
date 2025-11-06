@@ -5,35 +5,42 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Land extends Model
+class Field extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'farmer_id',
         'name',
-        'image_url',
-        'description',
+        'area',
+        'address',
         'latitude',
         'longitude',
-        'area',
+        'description',
+        'status',
     ];
 
-    // Relasi ke User (Farmer)
+    /**
+     * ✅ Relasi ke tabel users (farmer)
+     */
     public function farmer()
     {
         return $this->belongsTo(User::class, 'farmer_id');
     }
 
-    // Relasi ke Cycle
+    /**
+     * ✅ Relasi ke tabel cycles
+     */
     public function cycles()
     {
         return $this->hasMany(Cycle::class);
     }
 
-    // Relasi ke Movement (koreksi nama model)
-    public function movements()
+    /**
+     * ✅ Relasi ke tabel inventory_movements
+     */
+    public function inventoryMovements()
     {
-        return $this->hasMany(Movement::class, 'land_dest');
+        return $this->hasMany(InventoryMovement::class);
     }
 }
