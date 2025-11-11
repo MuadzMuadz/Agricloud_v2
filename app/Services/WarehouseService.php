@@ -1,70 +1,97 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\Warehouse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class WarehouseService
 {
+    public function __construct(protected ImageService $imageService) {}
+
+    /**
+     * Ambil daftar warehouse milik user (farmer)
+     */
     public function listForOwner()
     {
-        return Warehouse::where('user_id', Auth::id())
+        return Warehouse::where('farmer_id', Auth::id())
             ->withCount('items')
             ->latest()
             ->get();
     }
 
-    public function create(array $data)
+    /**
+     * Tambah warehouse baru
+     */
+    public function create(array $data, $request = null)
     {
-        $data['user_id'] = Auth::id();
+        $data['farmer_id'] = Auth::id();
+
+        // Upload gambar kalau ada
+        if ($request && $request->hasFile('image')) {
+            $data['image_url'] = $this->imageService->upload(
+                $request,
+                $data['name'],
+                'warehouse'
+            );
+        }
+
         return Warehouse::create($data);
     }
 
+    /**
+     * Detail warehouse (dengan items & movements)
+     */
     public function getDetail(Warehouse $warehouse)
     {
         return $warehouse->load(['items.movements' => fn($q) => $q->latest()]);
     }
 
-    public function update(Warehouse $warehouse, array $data)
+    /**
+     * Update warehouse (termasuk gambar)
+     */
+    public function update(Warehouse $warehouse, array $data, $request = null)
     {
+        if ($request && $request->hasFile('image')) {
+            $data['image_url'] = $this->imageService->upload(
+                $request,
+                $data['name'] ?? $warehouse->name,
+                'warehouse',
+                $warehouse->image_url
+            );
+        }
+
         $warehouse->update($data);
         return $warehouse->fresh();
     }
 
+    /**
+     * Hapus warehouse + gambar
+     */
     public function delete(Warehouse $warehouse)
     {
+        if ($warehouse->image_url) {
+            $this->imageService->delete($warehouse->image_url);
+        }
+
         $warehouse->delete();
     }
 
-    // Admin View
+    // ========================= ADMIN ZONE ========================= //
+
+    /**
+     * Daftar semua warehouse untuk admin
+     */
     public function listAllForAdmin()
     {
         return Warehouse::with(['user', 'items'])->latest()->get();
     }
 
+    /**
+     * Detail warehouse versi admin
+     */
     public function getDetailForAdmin($id)
     {
         return Warehouse::with(['user', 'items.movements'])->findOrFail($id);
-    }
-
-    public function handleImageUpload($request, $warehouseName, $oldImageUrl = null): ?string
-    {
-        $user = Auth::user();
-        $userDir = "user/{$user->username}_{$user->id}/warehouses";
-        $filename = Str::slug($warehouseName) . '.' . $request->file('image')->getClientOriginalExtension();
-
-        // Hapus file lama kalau ada
-        if ($oldImageUrl) {
-            $oldPath = str_replace('/storage/', 'public/', $oldImageUrl);
-            if (Storage::exists($oldPath)) {
-                Storage::delete($oldPath);
-            }
-        }
-
-        // Simpan file baru
-        $path = $request->file('image')->storeAs($userDir, $filename, 'public');
-        return Storage::url($path);
     }
 }

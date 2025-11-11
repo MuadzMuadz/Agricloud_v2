@@ -3,7 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Services\ItemService;
 use App\Models\Items;
-use App\Traits\ApiResponse;
+use App\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 

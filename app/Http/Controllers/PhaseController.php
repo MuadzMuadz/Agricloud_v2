@@ -4,22 +4,31 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\{Phase, Cycle};
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Http\Resources\PhaseResource;
+use App\ApiResponse;
+use GrahamCampbell\ResultType\Success;
 
 class PhaseController extends Controller
 {
-    use AuthorizesRequests;
+    use AuthorizesRequests , ApiResponse;
     // 🔹 List semua phase dalam 1 cycle
     public function index(Cycle $cycle)
     {
         $this->authorize('view', $cycle);
-        return response()->json($cycle->phases);
+        return $this->success(
+            PhaseResource::collection($cycle->phases),
+            'List of phases in the cycle'
+        );
     }
 
     // 🔹 Detail 1 phase
     public function show(Cycle $cycle, Phase $phase)
     {
         $this->authorize('view', $cycle);
-        return response()->json($phase);
+        return $this->success(
+            new PhaseResource($phase),
+            'Phase details'
+        );
     }
 
     // 🔹 Update status atau tanggal phase
@@ -35,9 +44,9 @@ class PhaseController extends Controller
 
         $phase->update($validated);
 
-        return response()->json([
-            'message' => 'Phase updated successfully',
-            'data' => $phase,
-        ]);
+        return $this->success(
+            new PhaseResource($phase),
+            'Phase updated successfully'
+        );
     }
 }

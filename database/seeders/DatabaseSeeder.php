@@ -22,15 +22,15 @@ class DatabaseSeeder extends Seeder
             LandSeeder::class,
             CropSeeder::class,
             // StageSeeder::class,
-            CycleSeeder::class,
-            PhaseSeeder::class,
+            // CycleSeeder::class,
+            // PhaseSeeder::class,
             WarehouseSeeder::class,
             CategoriesSeeder::class,
             ItemsSeeder::class,
             MovetypesSeeder::class,
             StatusSeeder::class,
-            MovementsSeeder::class,
-            NeedsSeeder::class,
+            // MovementsSeeder::class,
+            // NeedsSeeder::class,
         ]);
     }
 }

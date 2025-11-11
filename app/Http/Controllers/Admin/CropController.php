@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Crop;
 use App\Services\CropService;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\CropResource;
+use App\Http\Resources\CropListResource;
+use App\ApiResponse;
 
 class CropController extends Controller
 {
+    use ApiResponse;
     protected $cropService;
 
     public function __construct(CropService $cropService)
@@ -22,7 +25,10 @@ class CropController extends Controller
     public function index()
     {
         $crops = $this->cropService->getAll();
-        return response()->json($crops);
+        return $this->success(
+            CropListResource::collection($crops),
+            'List of all crops'
+        );
     }
 
     /**
@@ -34,7 +40,10 @@ class CropController extends Controller
         if (!$crop) {
             return response()->json(['message' => 'Crop not found'], 404);
         }
-        return response()->json($crop);
+        return $this->success(
+            new CropResource($crop),
+            'Crop details'
+        );
     }
 
     /**
@@ -47,7 +56,11 @@ class CropController extends Controller
         ]);
 
         $crop = $this->cropService->create($data);
-        return response()->json(['message' => 'Crop created successfully', 'data' => $crop], 201);
+        return $this->success(
+            $crop,
+            'Crop created successfully',
+            201
+        );
     }
 
     /**
@@ -56,16 +69,18 @@ class CropController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->only([
-            'name', 'latin_name', 'description', 'growth_duration',
-            'optimal_temp_min', 'optimal_temp_max', 'optimal_ph_min',
-            'optimal_ph_max', 'image_url'
+            'name', 'description', 'image_url',
         ]);
 
         $crop = $this->cropService->update($id, $data);
         if (!$crop) {
-            return response()->json(['message' => 'Crop not found'], 404);
+            return $this->error('Crop not found', 404);
         }
-        return response()->json(['message' => 'Crop updated successfully', 'data' => $crop]);
+        return $this->success(
+            $crop,
+            'Crop updated successfully',
+            200
+        );
     }
 
     /**
@@ -75,8 +90,12 @@ class CropController extends Controller
     {
         $deleted = $this->cropService->delete($id);
         if (!$deleted) {
-            return response()->json(['message' => 'Crop not found'], 404);
+            return $this->error('Crop not found', 404);
         }
-        return response()->json(['message' => 'Crop deleted successfully']);
+        return $this->success(
+            [],
+            'Crop deleted successfully',
+            200
+        );
     }
 }

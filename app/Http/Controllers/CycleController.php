@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\{Cycle, Crop, Phase};
+use App\Http\Requests\CycleRequest;
+use App\Http\Resources\CycleResource;
+use App\Models\Cycle;
 use App\Services\CycleService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
@@ -18,14 +20,14 @@ class CycleController extends Controller
     }
 
     // 🔹 List semua cycle milik farmer
-    public function index(Request $request)
+    public function index()
     {
         $cycles = Cycle::with(['crop', 'phases', 'land'])
-            ->whereHas('land', fn($q) => $q->where('user_id', $request->user()->id))
+            ->whereHas('land', fn($q) => $q->where('farmer_id', auth()->guard()->id()))
             ->latest()
             ->get();
 
-        return response()->json($cycles);
+        return CycleResource::collection($cycles);
     }
 
     // 🔹 Detail 1 cycle (hanya milik sendiri)
@@ -33,45 +35,33 @@ class CycleController extends Controller
     {
         $this->authorize('view', $cycle);
 
-        return response()->json(
-            $cycle->load(['crop.stages', 'phases', 'land'])
-        );
+        return new CycleResource($cycle->load(['crop', 'phases.status', 'land', 'status']));
     }
 
     // 🔹 Buat cycle baru (auto-generate phases)
-    public function store(Request $request)
+    public function store(CycleRequest $request)
     {
-        $validated = $request->validate([
-            'land_id' => 'required|exists:lands,id',
-            'crop_id' => 'required|exists:crops,id',
-        ]);
+        $cycle = $this->service->createCycleWithPhases(
+            $request->validated(),
+            auth()->guard()->user()
+        );
 
-        $cycle = $this->service->createCycleWithPhases($validated, $request->user());
-
-        return response()->json([
-            'message' => 'Cycle created successfully',
-            'data' => $cycle->load('phases'),
-        ], 201);
+        return (new CycleResource($cycle->load('phases')))
+            ->additional(['message' => 'Cycle created successfully']);
     }
 
     // 🔹 Update data cycle
-    public function update(Request $request, Cycle $cycle)
+    public function update(CycleRequest $request, Cycle $cycle)
     {
-        $this->authorize('update', $cycle);
+        $cycle->update($request->validated());
 
-        $cycle->update($request->only(['status', 'start_date', 'end_date']));
-
-        return response()->json([
-            'message' => 'Cycle updated successfully',
-            'data' => $cycle,
-        ]);
+        return (new CycleResource($cycle))
+            ->additional(['message' => 'Cycle updated successfully']);
     }
 
     // 🔹 Hapus cycle (soft delete)
-    public function destroy(Cycle $cycle)
+    public function destroy(    Cycle $cycle)
     {
-        $this->authorize('delete', $cycle);
-
         $cycle->delete();
 
         return response()->json(['message' => 'Cycle deleted successfully']);
@@ -85,6 +75,6 @@ class CycleController extends Controller
             ->whereHas('land', fn($q) => $q->where('user_id', auth()->guard()->id()))
             ->get();
 
-        return response()->json($cycles);
+        return CycleResource::collection($cycles);
     }
 }

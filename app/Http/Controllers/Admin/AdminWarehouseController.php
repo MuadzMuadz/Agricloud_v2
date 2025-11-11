@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\WarehouseService;
-use App\Traits\ApiResponse;
+use App\ApiResponse;
 
 class AdminWarehouseController extends Controller
 {

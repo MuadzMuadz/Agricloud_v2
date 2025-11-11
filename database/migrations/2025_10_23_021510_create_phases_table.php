@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('phases', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->foreignId('cycle_id')->constrained('cycles')->cascadeOnDelete();
             $table->foreignId('stage_id')->constrained('stages')->cascadeOnDelete();
             $table->foreignId('status_id')->nullable()->constrained('statuses')->nullOnDelete();

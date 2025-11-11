@@ -4,6 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Cycle;
+use App\Models\Stage;
+use App\Models\Status;
+use App\Models\Needs;
+use Carbon\Carbon;
+
 
 class Phase extends Model
 {
@@ -15,8 +21,8 @@ class Phase extends Model
         'stage_id',
         'status_id',
         'name',
-        'start_date',
-        'end_date',
+        'started_at',
+        'ended_at',
     ];
 
     public function Cycle()
@@ -38,4 +44,25 @@ class Phase extends Model
     {
         return $this->hasMany(Needs::class);
     }
+
+    protected static function booted()
+    {
+        static::retrieved(function ($phase) {
+            $now = Carbon::now();
+            if ($phase->started_at && $phase->ended_at) {
+                $statusName =
+                    $now->lt($phase->started_at) ? 'Pending' :
+                    ($now->gt($phase->ended_at) ? 'Completed' : 'Active');
+
+                $statusId = Status::where('type', 'phase')
+                    ->whereRaw('LOWER(name) = ?', [strtolower($statusName)])
+                    ->value('id');
+
+                if ($statusId && $statusId !== $phase->status_id) {
+                    $phase->updateQuietly(['status_id' => $statusId]);
+                }
+            }
+        });
+    }
+
 }

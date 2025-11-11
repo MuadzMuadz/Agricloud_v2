@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
 
 class WarehouseResource extends JsonResource
 {
@@ -22,8 +23,8 @@ class WarehouseResource extends JsonResource
                 : asset('images/default-warehouse.png'),
             'description' => $this->description,
             'location' => $this->location,
-            'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at->toDateTimeString(),
+            'created_at' => formatDate($this->created_at),
+            'updated_at' => formatDate($this->updated_at),
 
             'items_count' => $this->whenLoaded('items', fn() => $this->items->count()),
             'items' => $this->whenLoaded('items', fn() => $this->items->map(fn($item) => [

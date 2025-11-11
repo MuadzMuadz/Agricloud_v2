@@ -212,10 +212,19 @@ Route::middleware(['auth:sanctum'])
         Route::apiResource('needs', App\Http\Controllers\NeedController::class);
     });
 
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::prefix('lands')->group(function () {
+        Route::get('/', [LandController::class, 'index']);        // GET semua
+        Route::post('/', [LandController::class, 'store']);       // POST tambah baru
+        Route::get('{id}', [LandController::class, 'show']);      // GET detail
+        Route::put('{id}', [LandController::class, 'update']);    // PUT update
+        Route::delete('{id}', [LandController::class, 'destroy']); // DELETE hapus
+    });
+});
 
 
 
-Route::apiResource('lands', LandController::class);
+// Route::apiResource('lands', LandController::class);
 // Route::apiResource('crops', CropController::class);
 // Route::apiResource('cycles', CycleController::class);
 // Route::apiResource('warehouses', WarehouseController::class);
