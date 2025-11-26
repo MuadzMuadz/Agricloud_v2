@@ -58,9 +58,9 @@ class LandService
     }
 
     // 🔹 Ambil detail
-    public function find(int $id): ?Land
+    public function find(int $id): Land
     {
-        return Land::with('farmer')->find($id);
+        return Land::with('farmer')->findOrFail($id);
     }
 
     // 🔹 Hapus data (plus hapus image)
@@ -69,4 +69,16 @@ class LandService
         $this->imageService->delete($land->image_url);
         return $land->delete();
     }
+
+    public function listAllForAdmin()
+    {
+        return Land::all();
+    }
+
+    public function getDetailForAdmin($id)
+    {
+        
+        return Land::with(['farmer', 'cycles'])->findOrFail($id);
+    }
+
 }

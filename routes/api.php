@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\{
     AdminPhaseController,
     AdminWarehouseController,
     AdminItemController,
+    AdminLandController,
     AdminMovementController,
     AdminNeedController
 };
@@ -93,9 +94,9 @@ Route::middleware(['auth:sanctum', 'role:farmer'])->prefix('farmer')->group(func
     Route::get('/crops', [CropController::class, 'listTemplates']);  // List crop template untuk farmer
 });
 
-Route::middleware('auth:sanctum')->get('/me', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/me', function (Request $request) {
+//     return $request->user();
+// });
 
 // FARMER ROUTES
 Route::middleware(['auth:sanctum', 'role:farmer'])->prefix('farmer')->group(function () {
@@ -129,33 +130,11 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     });
 });
 
-Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
-
-        // WAREHOUSE MONITORING
-        Route::prefix('warehouses')->group(function () {
-            Route::get('/', [AdminWarehouseController::class, 'index']);     
-            Route::get('/{id}', [AdminWarehouseController::class, 'show']);   
-        });
-
-        // ITEM MONITORING
-        Route::prefix('items')->group(function () {
-            Route::get('/', [AdminItemController::class, 'index']);           
-            Route::get('/{id}', [AdminItemController::class, 'show']);        
-        });
-
-        // MOVEMENT MONITORING
-        Route::prefix('movements')->group(function () {
-            Route::get('/', [AdminMovementController::class, 'index']);       
-            Route::get('/{id}', [AdminMovementController::class, 'show']);    
-        });
-
-        // NEEDS MONITORING
-        Route::prefix('needs')->group(function () {
-            Route::get('/', [AdminNeedController::class, 'index']);           
-            Route::get('/{id}', [AdminNeedController::class, 'show']);        
-        });
-    });
-
+/*
+|--------------------------------------------------------------------------
+| Warehouse Routes —
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth:sanctum', 'role:farmer'])
     ->prefix('farmer')
     ->group(function () {
@@ -164,18 +143,18 @@ Route::middleware(['auth:sanctum', 'role:farmer'])
         Route::prefix('warehouses')->group(function () {
             Route::get('/', [WarehouseController::class, 'index']);       
             Route::post('/', [WarehouseController::class, 'store']);      
-            Route::get('/{id}', [WarehouseController::class, 'show']);    
-            Route::put('/{id}', [WarehouseController::class, 'update']);  
-            Route::delete('/{id}', [WarehouseController::class, 'destroy']); 
+            Route::put('/{warehouse}', [WarehouseController::class, 'update']);
+            Route::get('/{warehouse}', [WarehouseController::class, 'show']);
+            Route::delete('/{warehouse}', [WarehouseController::class, 'destroy']);
         });
 
         // ITEM MANAGEMENT (dalam warehouse)
         Route::prefix('items')->group(function () {
             Route::get('/warehouse/{warehouse_id}', [ItemController::class, 'indexByWarehouse']); 
             Route::post('/warehouse/{warehouse_id}', [ItemController::class, 'store']);           
-            Route::get('/{id}', [ItemController::class, 'show']);                                 
-            Route::put('/{id}', [ItemController::class, 'update']);                               
-            Route::delete('/{id}', [ItemController::class, 'destroy']);                           
+            Route::get('/{item}', [ItemController::class, 'show']);                                 
+            Route::put('/{item}', [ItemController::class, 'update']);                               
+            Route::delete('/{item}', [ItemController::class, 'destroy']);                           
         });
 
         // MOVEMENTS (stok keluar-masuk)
@@ -193,38 +172,47 @@ Route::middleware(['auth:sanctum', 'role:farmer'])
         });
     });
 
-// ADMIN ROUTES
-Route::middleware(['auth:sanctum', 'role:admin'])
-    ->prefix('admin')
-    ->group(function () {
-        Route::apiResource('warehouses', App\Http\Controllers\Admin\AdminWarehouseController::class)->only(['index', 'show']);
-        Route::apiResource('items', App\Http\Controllers\Admin\AdminItemController::class)->only(['index', 'show']);
-        Route::apiResource('movements', App\Http\Controllers\Admin\AdminMovementController::class)->only(['index', 'show']);
-        Route::apiResource('needs', App\Http\Controllers\Admin\AdminNeedController::class)->only(['index', 'show']);
+// ADMIN ROUTES (READ-ONLY)
+Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
+
+    // WAREHOUSE MONITORING
+    Route::prefix('warehouses')->group(function () {
+        Route::get('/', [AdminWarehouseController::class, 'index']);     
+        Route::get('/{warehouse}', [AdminWarehouseController::class, 'show']);   
     });
 
-// USER (FARMER) ROUTES
-Route::middleware(['auth:sanctum'])
-    ->group(function () {
-        Route::apiResource('warehouses', App\Http\Controllers\WarehouseController::class);
-        Route::apiResource('items', App\Http\Controllers\ItemController::class);
-        Route::apiResource('movements', App\Http\Controllers\MovementController::class);
-        Route::apiResource('needs', App\Http\Controllers\NeedController::class);
+    // ITEM MONITORING
+    Route::prefix('items')->group(function () {
+        Route::get('/', [AdminItemController::class, 'index']);           
+        Route::get('/{id}', [AdminItemController::class, 'show']);        
     });
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::prefix('lands')->group(function () {
-        Route::get('/', [LandController::class, 'index']);        // GET semua
-        Route::post('/', [LandController::class, 'store']);       // POST tambah baru
-        Route::get('{id}', [LandController::class, 'show']);      // GET detail
-        Route::put('{id}', [LandController::class, 'update']);    // PUT update
-        Route::delete('{id}', [LandController::class, 'destroy']); // DELETE hapus
+    // MOVEMENT MONITORING
+    Route::prefix('movements')->group(function () {
+        Route::get('/', [AdminMovementController::class, 'index']);       
+        Route::get('/{id}', [AdminMovementController::class, 'show']);    
+    });
+
+    // NEEDS MONITORING
+    Route::prefix('needs')->group(function () {
+        Route::get('/', [AdminNeedController::class, 'index']);           
+        Route::get('/{id}', [AdminNeedController::class, 'show']);        
     });
 });
 
+Route::middleware(['auth:sanctum', 'role:farmer'])->prefix('farmer')->group(function () {
+    Route::prefix('lands')->group(function () {
+        Route::get('/', [LandController::class, 'index']);
+        Route::post('/', [LandController::class, 'store']);
+        Route::get('{id}', [LandController::class, 'show']);
+        Route::put('{id}', [LandController::class, 'update']);
+        Route::delete('{id}', [LandController::class, 'destroy']);
+    });
+});
+Route::middleware(['auth:sanctum', 'role: admin'])->prefix('admin')->group(function () {
+    Route::prefix('lands')->group(function () {
+        Route::get('/', [AdminLandController::class, 'index']);
+        Route::get('{id}', [AdminLandController::class, 'show']);
+    });
+});
 
-
-// Route::apiResource('lands', LandController::class);
-// Route::apiResource('crops', CropController::class);
-// Route::apiResource('cycles', CycleController::class);
-// Route::apiResource('warehouses', WarehouseController::class);

@@ -1,50 +1,44 @@
 <?php
+
 namespace App\Policies;
 
 use App\Models\User;
 use App\Models\Items;
+use Illuminate\Support\Facades\Log;
 
 class ItemPolicy
 {
-    /**
-     * Admin auto-pass.
-     */
-    public function before(User $user)
+    public function view(User $user, Items $item): bool
     {
-        if ($user->role->name === 'admin') {
-            return true;
-        }
+        $item->loadMissing('warehouse');
+
+        Log::info('Policy check', [
+            'user_id' => $user->id,
+            'warehouse_owner' => $item->warehouse?->farmer_id,
+            'item_id' => $item->id,
+            'warehouse_id' => $item->warehouse_id,
+        ]);
+
+        return $user->role->name === 'admin' || $item->warehouse->farmer_id === $user->id;
     }
 
-    /**
-     * Lihat item tertentu (hanya kalau warehouse-nya miliknya).
-     */
-    public function view(User $user, Items $item)
+    public function create(User $user): bool
     {
-        return $user->id === $item->warehouse->user_id;
+        return $user->role->name === 'farmer';
     }
 
-    /**
-     * Boleh buat item di warehouse-nya sendiri.
-     */
-    public function create(User $user)
+    public function update(User $user, Items $item): bool
     {
-        return $user->role->name === 'farmer' || $user->role->name === 'user';
+        return $item->warehouse->farmer_id === $user->id;
     }
 
-    /**
-     * Update item (hanya kalau warehouse milik sendiri).
-     */
-    public function update(User $user, Items $item)
+    public function delete(User $user, Items $item): bool
     {
-        return $user->id === $item->warehouse->user_id;
+        return $item->warehouse->farmer_id === $user->id;
     }
 
-    /**
-     * Delete item.
-     */
-    public function delete(User $user, Items $item)
+    public function viewAny(User $user): bool
     {
-        return $user->id === $item->warehouse->user_id;
+        return in_array($user->role->name, ['admin', 'farmer']);
     }
 }

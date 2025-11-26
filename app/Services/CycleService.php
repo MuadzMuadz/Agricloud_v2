@@ -111,4 +111,16 @@ class CycleService
             $currentStart = $phaseEnd;
         }
     }
+
+    public function listAllforAdmin()
+    {
+        return Cycle::all();
+    }
+
+    public function getDetailforAdmin()
+    {
+        return Cycle::with(['land.farmer', 'crop', 'phases'])
+            ->latest()
+            ->get();
+    }
 }

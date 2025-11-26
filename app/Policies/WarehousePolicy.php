@@ -21,7 +21,7 @@ class WarehousePolicy
      */
     public function view(User $user, Warehouse $warehouse)
     {
-        return $user->id === $warehouse->user_id;
+        return $user->id === $warehouse->farmer_id;
     }
 
     /**
@@ -30,7 +30,7 @@ class WarehousePolicy
     public function create(User $user)
     {
         // Semua farmer/user biasa boleh create warehouse
-        return $user->role->name === 'farmer' || $user->role->name === 'user';
+        return $user->role->name === 'farmer';
     }
 
     /**
@@ -38,7 +38,7 @@ class WarehousePolicy
      */
     public function update(User $user, Warehouse $warehouse)
     {
-        return $user->id === $warehouse->user_id;
+        return $user->id === $warehouse->farmer_id;
     }
 
     /**
@@ -46,6 +46,6 @@ class WarehousePolicy
      */
     public function delete(User $user, Warehouse $warehouse)
     {
-        return $user->id === $warehouse->user_id;
+        return $user->id === $warehouse->farmer_id;
     }
 }

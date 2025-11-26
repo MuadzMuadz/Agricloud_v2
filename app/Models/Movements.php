@@ -33,7 +33,7 @@ class Movements extends Model
 
     public function Movetype()
     {
-        return $this->belongsTo(Movetypes::class);
+        return $this->belongsTo(MoveTypes::class);
     }
 
     public function Status()

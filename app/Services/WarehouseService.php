@@ -84,7 +84,7 @@ class WarehouseService
      */
     public function listAllForAdmin()
     {
-        return Warehouse::with(['user', 'items'])->latest()->get();
+        return Warehouse::with(['farmer', 'items'])->latest()->get();
     }
 
     /**
@@ -92,6 +92,6 @@ class WarehouseService
      */
     public function getDetailForAdmin($id)
     {
-        return Warehouse::with(['user', 'items.movements'])->findOrFail($id);
+        return Warehouse::with(['farmer', 'items'])->findOrFail($id);
     }
 }

@@ -22,7 +22,7 @@ class NeedPolicy
      */
     public function view(User $user, Needs $need)
     {
-        return $user->id === $need->item->warehouse->user_id;
+        return $user->id === $need->item->warehouse->farmer_id;
     }
 
     /**
@@ -30,7 +30,7 @@ class NeedPolicy
      */
     public function create(User $user)
     {
-        return $user->role->name === 'farmer' || $user->role->name === 'user';
+        return $user->role->name === 'farmer';
     }
 
     /**
@@ -38,7 +38,7 @@ class NeedPolicy
      */
     public function update(User $user, Needs $need)
     {
-        return $user->id === $need->item->warehouse->user_id;
+        return $user->id === $need->item->warehouse->farmer_id;
     }
 
     /**
@@ -46,7 +46,7 @@ class NeedPolicy
      */
     public function delete(User $user, Needs $need)
     {
-        return $user->id === $need->item->warehouse->user_id;
+        return $user->id === $need->item->warehouse->farmer_id;
     }
 }
 

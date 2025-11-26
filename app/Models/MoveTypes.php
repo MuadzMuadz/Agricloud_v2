@@ -10,7 +10,9 @@ class MoveTypes extends Model
     /** @use HasFactory<\Database\Factories\MovetypesFactory> */
     use HasFactory;
 
-    protected $fillable = [
+    protected $table = 'move_types';
+
+    protected $fillable = [ 
         'name',
         'code',
     ];

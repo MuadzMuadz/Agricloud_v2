@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\NeedService;
 use App\Models\Needs;
-use App\Traits\ApiResponse;
+use App\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 

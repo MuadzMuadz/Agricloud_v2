@@ -7,46 +7,26 @@ use App\Models\Movements;
 
 class MovementPolicy
 {
-    /**
-     * Admin override semua akses.
-     */
-    public function before(User $user)
+    public function view(User $user, Movements $movement): bool
     {
-        if ($user->role->name === 'admin') {
-            return true;
-        }
+        $movement->loadMissing('warehouse');
+        return $movement->warehouse && $movement->warehouse->farmer_id === $user->id;
     }
 
-    /**
-     * Lihat movement (hanya yang terkait warehouse miliknya).
-     */
-    public function view(User $user, Movements $movement)
+    public function create(User $user): bool
     {
-        return $user->id === $movement->item->warehouse->user_id;
+        return $user->role === 'farmer';
     }
 
-    /**
-     * Create movement (stok keluar/masuk).
-     */
-    public function create(User $user)
+    public function update(User $user, Movements $movement): bool
     {
-        // Farmer bisa buat movement antar warehouse-nya sendiri
-        return $user->role->name === 'farmer' || $user->role->name === 'user';
+        $movement->loadMissing('warehouse');
+        return $movement->warehouse && $movement->warehouse->farmer_id === $user->id;
     }
 
-    /**
-     * Update movement (biasanya jarang diubah).
-     */
-    public function update(User $user, Movements $movement)
+    public function delete(User $user, Movements $movement): bool
     {
-        return $user->id === $movement->item->warehouse->user_id;
-    }
-
-    /**
-     * Hapus movement (opsional).
-     */
-    public function delete(User $user, Movements $movement)
-    {
-        return $user->id === $movement->item->warehouse->user_id;
+        $movement->loadMissing('warehouse');
+        return $movement->warehouse && $movement->warehouse->farmer_id === $user->id;
     }
 }

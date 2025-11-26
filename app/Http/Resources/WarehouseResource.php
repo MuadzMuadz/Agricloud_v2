@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class WarehouseResource extends JsonResource
 {
@@ -20,7 +20,7 @@ class WarehouseResource extends JsonResource
             'name' => $this->name,
             'image_url' => $this->image_url
                 ? url($this->image_url)
-                : asset('images/default-warehouse.png'),
+                : Storage::url('images/default-warehouse.jpeg'),
             'description' => $this->description,
             'location' => $this->location,
             'created_at' => formatDate($this->created_at),
