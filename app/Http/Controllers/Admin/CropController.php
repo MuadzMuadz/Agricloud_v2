@@ -98,4 +98,13 @@ class CropController extends Controller
             200
         );
     }
+
+    public function listCrops()
+    {
+        $crops = $this->cropService->getAll();
+        return $this->success(
+            CropListResource::collection($crops),
+            'List of crop templates for farmers'
+        );
+    }
 }

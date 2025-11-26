@@ -91,7 +91,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth:sanctum', 'role:farmer'])->prefix('farmer')->group(function () {
-    Route::get('/crops', [CropController::class, 'listTemplates']);  // List crop template untuk farmer
+    Route::get('/crops', [CropController::class, 'listCrops']);  // List crop template untuk farmer
 });
 
 // Route::middleware('auth:sanctum')->get('/me', function (Request $request) {
