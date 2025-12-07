@@ -42,9 +42,13 @@ class LandService
     }
 
     // 🔹 Update lahan
-    public function update(Request $request, Land $land, array $data): Land
+    public function update(Request $request, Land $land): Land
     {
-        if ($request->hasFile('image')) {
+        // Ambil data dari request
+        $data = $request->only(['name', 'description', 'latitude', 'longitude', 'area']);
+        
+        // Handle file upload
+        if ($request && $request->hasFile('image')) {
             $data['image_url'] = $this->imageService->upload(
                 $request,
                 $data['name'] ?? $land->name,
@@ -52,6 +56,7 @@ class LandService
                 $land->image_url
             );
         }
+
 
         $land->update($data);
         return $land;

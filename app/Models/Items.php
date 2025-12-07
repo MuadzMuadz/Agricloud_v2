@@ -30,7 +30,7 @@ class Items extends Model
 
     public function Movements()
     {
-        return $this->hasMany(Movements::class);
+        return $this->hasMany(Movements::class, 'item_id');
     }
 
     public function Needs()

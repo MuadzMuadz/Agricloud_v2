@@ -35,12 +35,12 @@ class LandController extends Controller
 
     public function update(LandRequest $request, $id)
     {
-        $land = $this->service->find($id);
+         $land = $this->service->find($id);
         if (!$land) {
             return $this->error('Data lahan tidak ditemukan', 404);
         }
 
-        $updated = $this->service->update($request, $land, $request->validated());
+        $updated = $this->service->update($request, $land, $request->all()); // test dengan all()
         return $this->success(new LandResource($updated), 'Data lahan berhasil diperbarui');
     }
 

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\CropService;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CropResource;
-use App\Http\Resources\CropListResource;
+use App\Http\Requests\CropRequest;
 use App\ApiResponse;
 
 class CropController extends Controller
@@ -26,7 +26,7 @@ class CropController extends Controller
     {
         $crops = $this->cropService->getAll();
         return $this->success(
-            CropListResource::collection($crops),
+            CropResource::collection($crops),
             'List of all crops'
         );
     }
@@ -38,7 +38,7 @@ class CropController extends Controller
     {
         $crop = $this->cropService->getById($id);
         if (!$crop) {
-            return response()->json(['message' => 'Crop not found'], 404);
+            return $this->error('Crop not found', 404);
         }
         return $this->success(
             new CropResource($crop),
@@ -49,15 +49,11 @@ class CropController extends Controller
     /**
      * Tambah crop baru
      */
-    public function store(Request $request)
+    public function store(CropRequest $request)
     {
-        $data = $request->only([
-            'name', 'description','image_url'
-        ]);
-
-        $crop = $this->cropService->create($data);
+        $crop = $this->cropService->create($request);
         return $this->success(
-            $crop,
+            new CropResource($crop),
             'Crop created successfully',
             201
         );
@@ -66,18 +62,14 @@ class CropController extends Controller
     /**
      * Update crop tertentu
      */
-    public function update(Request $request, $id)
+    public function update(CropRequest $request, $id)
     {
-        $data = $request->only([
-            'name', 'description', 'image_url',
-        ]);
-
-        $crop = $this->cropService->update($id, $data);
+        $crop = $this->cropService->update($request, $id);
         if (!$crop) {
             return $this->error('Crop not found', 404);
         }
         return $this->success(
-            $crop,
+            new CropResource($crop),
             'Crop updated successfully',
             200
         );
@@ -99,11 +91,14 @@ class CropController extends Controller
         );
     }
 
+    /**
+     * List crops untuk farmer
+     */
     public function listCrops()
     {
         $crops = $this->cropService->getAll();
         return $this->success(
-            CropListResource::collection($crops),
+            CropResource::collection($crops),
             'List of crop templates for farmers'
         );
     }

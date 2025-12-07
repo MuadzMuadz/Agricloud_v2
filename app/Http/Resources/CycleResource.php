@@ -23,6 +23,7 @@ class CycleResource extends JsonResource
             'crop' => [
                 'id'   => $this->crop->id,
                 'name' => $this->crop->name,
+                'image'=> $this->crop->image_url,
             ],
             'phases' => PhaseResource::collection($this->whenLoaded('phases')),
             'created_at' => formatDate($this->created_at),

@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Services\ImageService;
 use App\Models\User;
 use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
+    public function __construct(protected ImageService $imageService) {}
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -17,7 +20,6 @@ class AuthController extends Controller
             'email' => 'required|string|email|unique:users,email',
             'password' => 'required|string|min:8',
             'phone_number' => 'nullable|string|max:20',
-            'profile_url' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -29,7 +31,6 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => $request->password, // Auto hashed in model
             'phone_number' => $request->phone_number,
-            'profile_url' => $request->profile_url,
             'role_id' => 2, // default farmer
         ]);
 
@@ -97,28 +98,46 @@ class AuthController extends Controller
         $user = $request->user();
 
         $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|string|max:100',
-            'email' => [
+            'name'         => 'sometimes|string|max:100',
+            'email'        => [
                 'sometimes',
                 'email',
                 Rule::unique('users')->ignore($user->id),
             ],
             'phone_number' => 'nullable|string|max:20',
-            'profile_url' => 'nullable|string',
+            'image'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $user->update($validator->validated());
+        $data = $validator->validated();
+
+        // handle upload image lewat ImageService
+        if ($request->hasFile('image')) {
+            $oldImageUrl = $user->profil_url ?? null; // sesuaikan nama kolom di tabel users
+            $newImageUrl = $this->imageService->upload(
+                $request,
+                $user->name ?? 'user_'.$user->id, // entityName
+                'profile',                        // type (sesuai match di ImageService)
+                $oldImageUrl
+            );
+
+            if ($newImageUrl) {
+                $data['profil_url'] = $newImageUrl; // simpan url baru ke kolom user
+            }
+        }
+
+        $user->update($data);
 
         return response()->json([
-            'status' => 'success',
+            'status'  => 'success',
             'message' => 'Profile updated successfully',
-            'user' => $user,
+            'user'    => $user,
         ]);
     }
+
 
     public function changePassword(Request $request)
     {

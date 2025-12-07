@@ -19,7 +19,7 @@ class CropResource extends JsonResource
             'id'          => $this->id,
             'name'        => $this->name,
             'description' => $this->description ?? null,
-            'type'        => $this->type ?? null,
+            'image_url'   => $this->image_url ?? null,
             'stages'      => StageResource::collection($this->whenLoaded('stages')),
             'created_at'  => formatDate($this->created_at),
             'updated_at'  => formatDate($this->updated_at),

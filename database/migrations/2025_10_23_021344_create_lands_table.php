@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('farmer_id')->constrained('users')->cascadeOnDelete();
             $table->string('name');
-            $table->text('image_url')->nullable();
+            $table->text('image_d url')->nullable();
             $table->text('description')->nullable();
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ItemRequest;
 use App\Http\Resources\ItemResource;
+use App\Models\Categories;
 use App\Models\Items;
 use App\Services\ItemService;
 use App\ApiResponse;
@@ -45,5 +46,10 @@ class ItemController extends Controller
         Gate::authorize('delete', $item);
         $this->service->delete($item);
         return $this->success([], 'Item berhasil dihapus');
+    }
+    public function getcategories()
+    {
+        $categories = Categories::get();
+        return $this->success($categories, 'Daftar kategori item');
     }
 }

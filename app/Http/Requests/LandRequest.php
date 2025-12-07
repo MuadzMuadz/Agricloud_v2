@@ -25,7 +25,7 @@ class LandRequest extends FormRequest
         ];
 
         // kalau update (PUT/PATCH), semua jadi optional
-        if ($this->$isPut || $this->$isPost) {
+        if ($isPut || $isPost) {
             foreach ($rules as $key => &$rule) {
                 $rule = str_replace('required', 'sometimes', $rule);
             }

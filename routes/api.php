@@ -150,6 +150,7 @@ Route::middleware(['auth:sanctum', 'role:farmer'])
 
         // ITEM MANAGEMENT (dalam warehouse)
         Route::prefix('items')->group(function () {
+            Route::get('/categories', [ItemController::class, 'getcategories']);
             Route::get('/warehouse/{warehouse_id}', [ItemController::class, 'indexByWarehouse']); 
             Route::post('/warehouse/{warehouse_id}', [ItemController::class, 'store']);           
             Route::get('/{item}', [ItemController::class, 'show']);                                 

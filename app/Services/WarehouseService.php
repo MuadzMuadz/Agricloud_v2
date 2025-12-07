@@ -50,11 +50,11 @@ class WarehouseService
     /**
      * Update warehouse (termasuk gambar)
      */
-    public function update(Warehouse $warehouse, array $data, $request = null)
+    public function update(Warehouse $warehouse, array $data, $imageFile = null)
     {
-        if ($request && $request->hasFile('image')) {
+        if ($imageFile) {
             $data['image_url'] = $this->imageService->upload(
-                $request,
+                $imageFile,
                 $data['name'] ?? $warehouse->name,
                 'warehouse',
                 $warehouse->image_url

@@ -22,7 +22,7 @@ class WarehouseRequest extends FormRequest
 
         return [
             'name' => [
-                'required',
+                $isPost ? 'required' : 'nullable',
                 'string',
                 'max:150',
                 // Unik per user (farmer_id)

@@ -72,7 +72,7 @@ class CycleController extends Controller
     {
         $cycles = Cycle::with(['crop', 'phases'])
             ->where('land_id', $landId)
-            ->whereHas('land', fn($q) => $q->where('user_id', auth()->guard()->id()))
+            ->whereHas('land', fn($q) => $q->where('farmer_id', auth()->guard()->id()))
             ->get();
 
         return CycleResource::collection($cycles);
