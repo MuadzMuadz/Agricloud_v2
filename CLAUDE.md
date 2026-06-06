@@ -11,7 +11,7 @@ Patuhi dulu aturan global di `../CLAUDE.md`. File ini menambahkan aturan teknis 
 
 ## Port Resmi
 
-- **8000** via `php artisan serve`.
+- **8005** via `php artisan serve --port=8005` (menggantikan port lama 8000).
 - Cek dulu apakah sudah jalan sebelum start. **Jangan** start di port lain.
 
 ## Status Saat Ini
@@ -31,4 +31,4 @@ Patuhi dulu aturan global di `../CLAUDE.md`. File ini menambahkan aturan teknis 
 ## Verifikasi
 
 - Jalankan `php artisan test` untuk perubahan logic.
-- Tes endpoint nyata (curl/Postman) terhadap `localhost:8000` dan tunjukkan response.
+- Tes endpoint nyata (curl/Postman) terhadap `localhost:8005` dan tunjukkan response.

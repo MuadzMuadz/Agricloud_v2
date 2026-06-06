@@ -43,13 +43,14 @@ serta dashboard analitik.
 
 ## Status Pengembangan
 
-| Area                       | Status          | Keterangan                                                     |
-| -------------------------- | --------------- | -------------------------------------------------------------- |
-| Skema database & migration | ✅ Selesai      | 14 tabel domain, lihat [`docs/DATABASE.md`](docs/DATABASE.md). |
-| Model Eloquent & relasi    | ✅ Selesai      | 14 model dengan relasi lengkap di `app/Models/`.               |
-| Seeder & factory           | ✅ Selesai      | Data uji untuk seluruh entitas.                                |
-| Controller & route API     | 🟡 Skeleton     | Baru tersedia `GET /api/user`. Controller lain masih kosong.   |
-| Endpoint Auth, Lahan, dll. | 🔴 Direncanakan | Lihat [`docs/API.md`](docs/API.md) bagian *Direncanakan*.      |
+| Area                            | Status          | Keterangan                                                         |
+| ------------------------------- | --------------- | ------------------------------------------------------------------ |
+| Skema database & migration      | ✅ Selesai      | 14 tabel domain, lihat [`docs/DATABASE.md`](docs/DATABASE.md).     |
+| Model Eloquent & relasi         | ✅ Selesai      | 14 model dengan relasi lengkap di `app/Models/`.                   |
+| Seeder & factory                | ✅ Selesai      | Data uji untuk seluruh entitas.                                    |
+| Auth, MyFields, Crop-Templates  | ✅ Selesai      | 7 endpoint, tervalidasi test. Lihat [`docs/API.md`](docs/API.md).  |
+| Manajemen entitas lain (CRUD)   | 🔴 Direncanakan | `cycles`, `warehouses`, `items`, dll — belum ada endpoint.         |
+| Manajemen user (admin)          | 🔴 Direncanakan | `Admin/UserController` masih kosong.                               |
 
 ---
 
@@ -117,9 +118,10 @@ Sebelum melapor selesai, format kode dengan Laravel Pint:
 
 ```
 app/
-├── Http/Controllers/        # Controller (sebagian besar masih skeleton)
-│   ├── AuthController.php
-│   └── Admin/UserController.php
+├── Http/
+│   ├── Controllers/         # AuthController, MyFieldController, CropTemplateController
+│   │   └── Admin/UserController.php   # masih kosong (direncanakan)
+│   └── Resources/           # UserResource, LandResource, CropTemplateResource
 └── Models/                  # 14 model Eloquent + relasi
 
 database/
