@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CropTemplateController;
 use App\Http\Controllers\CycleController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\MyFieldController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Http\Request;
@@ -28,6 +29,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/warehouses', [WarehouseController::class, 'store']);
     Route::put('/warehouses/{id}', [WarehouseController::class, 'update']);
     Route::delete('/warehouses/{id}', [WarehouseController::class, 'destroy']);
+
+    // Barang (items) di dalam gudang milik user — owner-scoped lewat gudang.
+    Route::get('/warehouses/{id}/items', [ItemController::class, 'index']);
+    Route::post('/warehouses/{id}/items', [ItemController::class, 'store']);
+    Route::put('/items/{id}', [ItemController::class, 'update']);
+    Route::delete('/items/{id}', [ItemController::class, 'destroy']);
 
     // Endpoint bawaan (kompatibilitas) — user yang sedang login.
     Route::get('/user', fn (Request $request) => $request->user());
