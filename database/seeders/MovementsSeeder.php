@@ -2,8 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Items;
+use App\Models\Land;
+use App\Models\Movements;
+use App\Models\MoveTypes;
+use App\Models\Status;
+use App\Models\Warehouse;
 use Illuminate\Database\Seeder;
-use App\Models\{Movements, MoveTypes, Warehouse, Land, Items, Status};
 
 class MovementsSeeder extends Seeder
 {
@@ -17,16 +22,19 @@ class MovementsSeeder extends Seeder
 
         if ($items->isEmpty() || $warehouses->isEmpty() || $moveTypes->isEmpty()) {
             $this->command->warn('⚠️ MovementSeeder dilewati (belum ada items / warehouses / move types).');
+
             return;
         }
 
-        $typeCodes = $moveTypes->pluck('code')->map(fn($code) => strtoupper($code))->toArray();
+        $typeCodes = $moveTypes->pluck('code')->map(fn ($code) => strtoupper($code))->toArray();
         $count = 0;
 
         for ($i = 0; $i < 15; $i++) {
             $typeCode = $typeCodes[$i % 3]; // biar rata: 5 IN, 5 OUT, 5 TRANSFER
             $type = $moveTypes->where('code', $typeCode)->first();
-            if (!$type) continue;
+            if (! $type) {
+                continue;
+            }
 
             $item = $items->random();
             $sourceWarehouse = $warehouses->random();
@@ -36,7 +44,7 @@ class MovementsSeeder extends Seeder
             $sameFarmerWarehouses = $warehouses
                 ->where('farmer_id', $sourceWarehouse->farmer_id)
                 ->where('id', '!=', $sourceWarehouse->id);
-            
+
             if ($typeCode === 'TRANSFER' && $sameFarmerWarehouses->isEmpty()) {
                 $typeCode = 'OUT';
                 $type = $moveTypes->where('code', 'OUT')->first();
@@ -47,14 +55,14 @@ class MovementsSeeder extends Seeder
                 : null;
 
             $movementData = [
-                'warehouse_id'   => null,
-                'item_id'        => $item->id,
-                'movetype_id'    => $type->id,
-                'status_id'      => $status?->id ?? 1, // default status
-                'land_dest'      => null,
+                'warehouse_id' => null,
+                'item_id' => $item->id,
+                'movetype_id' => $type->id,
+                'status_id' => $status?->id ?? 1, // default status
+                'land_dest' => null,
                 'warehouse_dest' => null,
-                'quantity'       => rand(1, 30),
-                'note'           => null,
+                'quantity' => rand(1, 30),
+                'note' => null,
             ];
 
             switch ($typeCode) {

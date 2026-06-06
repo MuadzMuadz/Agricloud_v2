@@ -2,18 +2,19 @@
 
 namespace App\Models;
 
+use Database\Factories\StageFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Stage extends Model
 {
-    /** @use HasFactory<\Database\Factories\StageFactory> */
+    /** @use HasFactory<StageFactory> */
     use HasFactory;
 
     protected $fillable = [
         'crop_id',
         'name',
-        'description',
+        'order',
         'duration_days',
     ];
 

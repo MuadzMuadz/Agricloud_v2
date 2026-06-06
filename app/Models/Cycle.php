@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\CycleFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Cycle extends Model
 {
-    /** @use HasFactory<\Database\Factories\CycleFactory> */
+    /** @use HasFactory<CycleFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -34,7 +35,7 @@ class Cycle extends Model
     {
         return $this->belongsTo(Status::class);
     }
-    
+
     public function Phases()
     {
         return $this->hasMany(Phase::class);

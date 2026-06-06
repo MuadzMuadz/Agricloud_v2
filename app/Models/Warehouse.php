@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\WarehouseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Warehouse extends Model
 {
-    /** @use HasFactory<\Database\Factories\WarehouseFactory> */
+    /** @use HasFactory<WarehouseFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -16,6 +17,15 @@ class Warehouse extends Model
         'image_url',
         'description',
         'location',
+        'capacity',
+        'latitude',
+        'longitude',
+    ];
+
+    protected $casts = [
+        'capacity' => 'integer',
+        'latitude' => 'float',
+        'longitude' => 'float',
     ];
 
     public function Farmer()

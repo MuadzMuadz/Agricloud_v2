@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Stage;
 use App\Models\Crop;
+use App\Models\Stage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class StageFactory extends Factory

@@ -2,12 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\MoveTypes;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\movetypes>
+ * @extends Factory<MoveTypes>
  */
-class MovetypesFactory extends Factory
+class MoveTypesFactory extends Factory
 {
     /**
      * Define the model's default state.

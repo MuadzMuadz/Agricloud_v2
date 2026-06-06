@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Crop;
+use App\Models\Stage;
 use Illuminate\Database\Seeder;
-use App\Models\{Crop, Stage};
 
 class StageSeeder extends Seeder
 {
@@ -11,7 +12,7 @@ class StageSeeder extends Seeder
     {
         // pastikan sudah ada crop
         if (Crop::count() === 0) {
-            $crops = \App\Models\Crop::factory()->count(4)->create();
+            $crops = Crop::factory()->count(4)->create();
         } else {
             $crops = Crop::all();
         }
@@ -37,9 +38,9 @@ class StageSeeder extends Seeder
 
             foreach ($baseStages as $stage) {
                 Stage::create([
-                    'crop_id'       => $crop->id,
-                    'name'          => $stage['name'],
-                    'order'         => $stage['order'],
+                    'crop_id' => $crop->id,
+                    'name' => $stage['name'],
+                    'order' => $stage['order'],
                     'duration_days' => $stage['duration_days'],
                 ]);
             }

@@ -3,12 +3,13 @@
 namespace Database\Factories;
 
 use App\Models\Crop;
+use App\Models\cycle;
 use App\Models\Land;
 use App\Models\Status;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\cycle>
+ * @extends Factory<cycle>
  */
 class CycleFactory extends Factory
 {
@@ -23,7 +24,7 @@ class CycleFactory extends Factory
             'land_id' => Land::inRandomOrder()->first()?->id ?? Land::factory(),
             'crop_id' => $Crop = (Crop::inRandomOrder()->first()?->id ?? Crop::factory()),
             'status_id' => Status::inRandomOrder()->first()?->id ?? Status::factory(),
-            'name' => 'Cycle ' . Crop::find($Crop)->name,
+            'name' => 'Cycle '.Crop::find($Crop)->name,
             'start_date' => $this->faker->dateTimeBetween('-30 days', 'now'),
             'end_date' => $this->faker->dateTimeBetween('now', '+30 days'),
         ];

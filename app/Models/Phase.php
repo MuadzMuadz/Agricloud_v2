@@ -2,21 +2,21 @@
 
 namespace App\Models;
 
+use Database\Factories\PhaseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Phase extends Model
 {
-    /** @use HasFactory<\Database\Factories\PhaseFactory> */
+    /** @use HasFactory<PhaseFactory> */
     use HasFactory;
 
     protected $fillable = [
         'cycle_id',
         'stage_id',
         'status_id',
-        'name',
-        'start_date',
-        'end_date',
+        'started_at',
+        'ended_at',
     ];
 
     public function Cycle()

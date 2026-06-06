@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Land;
+use Illuminate\Database\Seeder;
 
 class LandSeeder extends Seeder
 {

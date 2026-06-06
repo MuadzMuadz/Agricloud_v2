@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\MoveTypes;
+use Illuminate\Database\Seeder;
 
 class MoveTypesSeeder extends Seeder
 {

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\MovementsFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Movements extends Model
 {
-    /** @use HasFactory<\Database\Factories\MovementsFactory> */
+    /** @use HasFactory<MovementsFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -33,7 +34,7 @@ class Movements extends Model
 
     public function Movetype()
     {
-        return $this->belongsTo(Movetypes::class);
+        return $this->belongsTo(MoveTypes::class);
     }
 
     public function Status()

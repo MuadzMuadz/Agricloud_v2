@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Categories;
+use App\Models\Items;
+use App\Models\Warehouse;
 use Illuminate\Database\Seeder;
-use App\Models\{Items, Warehouse, Categories};
 
 class ItemsSeeder extends Seeder
 {
@@ -14,11 +16,13 @@ class ItemsSeeder extends Seeder
 
         if ($warehouses->isEmpty()) {
             $this->command->warn('⚠️ Tidak ada warehouse. Jalankan WarehouseSeeder dulu.');
+
             return;
         }
 
         if ($categories->isEmpty()) {
             $this->command->warn('⚠️ Tidak ada kategori. Jalankan CategorySeeder dulu.');
+
             return;
         }
 
@@ -28,10 +32,10 @@ class ItemsSeeder extends Seeder
             for ($i = 1; $i <= 5; $i++) {
                 Items::create([
                     'warehouse_id' => $warehouse->id,
-                    'category_id'  => $categories->random()->id,
-                    'name'         => "Item {$i} - {$warehouse->name}",
-                    'stock'        => fake()->numberBetween(10, 200),
-                    'unit'         => fake()->randomElement(['kg', 'liter', 'pcs']),
+                    'category_id' => $categories->random()->id,
+                    'name' => "Item {$i} - {$warehouse->name}",
+                    'stock' => fake()->numberBetween(10, 200),
+                    'unit' => fake()->randomElement(['kg', 'liter', 'pcs']),
                 ]);
             }
         }
