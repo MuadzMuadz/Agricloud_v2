@@ -35,4 +35,23 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Open-Meteo (Integration-Weather)
+    |--------------------------------------------------------------------------
+    |
+    | Sumber data cuaca utama (tanpa API key). `base_url` untuk forecast,
+    | `geocoding_url` untuk autocomplete kecamatan. Default lokasi dipakai bila
+    | rantai resolusi (device -> manual -> lahan -> IP) gagal: Kejaksan, Cirebon.
+    |
+    */
+    'weather' => [
+        'base_url' => env('OPEN_METEO_BASE_URL', 'https://api.open-meteo.com/v1'),
+        'geocoding_url' => env('OPEN_METEO_GEOCODING_URL', 'https://geocoding-api.open-meteo.com/v1'),
+        'cache_ttl' => (int) env('WEATHER_CACHE_TTL', 1800), // detik (30 menit)
+        'default_lat' => (float) env('WEATHER_DEFAULT_LAT', -6.7063),
+        'default_lon' => (float) env('WEATHER_DEFAULT_LON', 108.5571),
+        'default_district' => env('WEATHER_DEFAULT_DISTRICT', 'Kejaksan, Cirebon'),
+    ],
+
 ];

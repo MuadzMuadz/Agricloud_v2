@@ -8,11 +8,17 @@ use App\Http\Controllers\MovementController;
 use App\Http\Controllers\MyFieldController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\WeatherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // --- Publik ---
 Route::get('/crop-templates', [CropTemplateController::class, 'index']);
+
+// Cuaca — Bearer opsional: tanpa token resolusi via IP/default, dengan token
+// ikut setelan & lahan user (lihat WeatherController::resolveLocation).
+Route::get('/weather', [WeatherController::class, 'index']);
+Route::get('/weather/search', [WeatherController::class, 'search']);
 
 // --- Terproteksi (Bearer / Sanctum) ---
 Route::middleware('auth:sanctum')->group(function () {
