@@ -5,6 +5,7 @@ use App\Http\Controllers\CycleController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\MyFieldController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Transaksi stok (movements) masuk/keluar pada item gudang milik user.
     Route::get('/warehouses/{id}/movements', [MovementController::class, 'index']);
     Route::post('/movements', [MovementController::class, 'store']);
+
+    // Tindakan Hari Ini (computed) — owner-scoped.
+    Route::get('/tasks', [TaskController::class, 'index']);
 
     // Endpoint bawaan (kompatibilitas) — user yang sedang login.
     Route::get('/user', fn (Request $request) => $request->user());
