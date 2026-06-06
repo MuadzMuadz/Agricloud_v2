@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Crop;
+use App\Models\Stage;
 use Illuminate\Database\Seeder;
-use App\Models\{Crop, Stage};
 
 class CropSeeder extends Seeder
 {
@@ -11,10 +12,10 @@ class CropSeeder extends Seeder
     {
         // buat 4 template crop
         $crops = [
-            ['name' => 'Bayam', 'image_url' => 'https://picsum.photos/200?random=1'],
-            ['name' => 'Kangkung', 'image_url' => 'https://picsum.photos/200?random=2'],
-            ['name' => 'Tomat', 'image_url' => 'https://picsum.photos/200?random=3'],
-            ['name' => 'Selada', 'image_url' => 'https://picsum.photos/200?random=4'],
+            ['name' => 'Bayam', 'category' => 'Sayuran Daun', 'image_url' => 'https://picsum.photos/200?random=1'],
+            ['name' => 'Kangkung', 'category' => 'Sayuran Daun', 'image_url' => 'https://picsum.photos/200?random=2'],
+            ['name' => 'Tomat', 'category' => 'Buah', 'image_url' => 'https://picsum.photos/200?random=3'],
+            ['name' => 'Selada', 'category' => 'Sayuran Daun', 'image_url' => 'https://picsum.photos/200?random=4'],
         ];
 
         foreach ($crops as $cropData) {
@@ -42,9 +43,9 @@ class CropSeeder extends Seeder
             // simpan semua stage untuk crop ini
             foreach ($baseStages as $stage) {
                 Stage::create([
-                    'crop_id'       => $crop->id,
-                    'name'          => $stage['name'],
-                    'order'         => $stage['order'],
+                    'crop_id' => $crop->id,
+                    'name' => $stage['name'],
+                    'order' => $stage['order'],
                     'duration_days' => $stage['duration_days'],
                 ]);
             }

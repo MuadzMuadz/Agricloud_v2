@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\crop;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\crop>
+ * @extends Factory<crop>
  */
 class CropFactory extends Factory
 {
@@ -19,6 +20,7 @@ class CropFactory extends Factory
         return [
             'name' => $this->faker->unique()->randomElement(['Tomat', 'Selada', 'Bayam', 'Kangkung']),
             'description' => $this->faker->paragraph(),
+            'category' => $this->faker->randomElement(['Sayuran Daun', 'Buah', 'Pangan', 'Umbi', 'Hortikultura']),
             'image_url' => $this->faker->imageUrl(),
         ];
     }

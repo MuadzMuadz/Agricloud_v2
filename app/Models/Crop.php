@@ -2,17 +2,19 @@
 
 namespace App\Models;
 
+use Database\Factories\CropFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Crop extends Model
 {
-    /** @use HasFactory<\Database\Factories\CropFactory> */
+    /** @use HasFactory<CropFactory> */
     use HasFactory;
-    
+
     protected $fillable = [
         'name',
         'description',
+        'category',
         'image_url',
     ];
 
