@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\LandFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Land extends Model
 {
-    /** @use HasFactory<\Database\Factories\LandFactory> */
+    /** @use HasFactory<LandFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -18,6 +19,11 @@ class Land extends Model
         'latitude',
         'longitude',
         'area',
+        'boundary',
+    ];
+
+    protected $casts = [
+        'boundary' => 'array',
     ];
 
     public function Farmer()
@@ -34,5 +40,4 @@ class Land extends Model
     {
         return $this->hasMany(Movements::class, 'land_dest');
     }
-
 }
