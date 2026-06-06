@@ -22,15 +22,18 @@ class DatabaseSeeder extends Seeder
             LandSeeder::class,
             CropSeeder::class,
             // StageSeeder::class,
+            // StatusSeeder harus sebelum CycleSeeder agar fase nyambung ke
+            // Status type='phase' (lihat [[Cycle-PhaseStatusSeed]]).
+            StatusSeeder::class,
             CycleSeeder::class,
             PhaseSeeder::class,
             WarehouseSeeder::class,
             CategoriesSeeder::class,
             ItemsSeeder::class,
             MovetypesSeeder::class,
-            StatusSeeder::class,
             MovementsSeeder::class,
             NeedsSeeder::class,
+            NotificationSeeder::class,
         ]);
     }
 }

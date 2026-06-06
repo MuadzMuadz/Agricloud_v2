@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\MyFieldController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WeatherController;
@@ -52,6 +53,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // Tindakan Hari Ini (computed) & ringkasan KPI dashboard — owner-scoped.
     Route::get('/tasks', [TaskController::class, 'index']);
     Route::get('/dashboard/summary', [DashboardController::class, 'summary']);
+
+    // Notifikasi in-app (channel database).
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'readAll']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'read']);
 
     // Endpoint bawaan (kompatibilitas) — user yang sedang login.
     Route::get('/user', fn (Request $request) => $request->user());
