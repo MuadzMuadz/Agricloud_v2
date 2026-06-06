@@ -2,12 +2,14 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
@@ -25,7 +27,7 @@ class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'role_id' => 2,
+            'role_id' => Role::firstOrCreate(['name' => 'farmer'])->id,
             'email' => fake()->unique()->safeEmail(),
             'profil_url' => fake()->imageUrl(200, 200, 'people'),
             'phone_number' => fake()->unique()->phoneNumber(),

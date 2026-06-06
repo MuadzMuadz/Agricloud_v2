@@ -37,6 +37,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Google OAuth (Integration-GoogleOAuth)
+    |--------------------------------------------------------------------------
+    |
+    | Dipakai Socialite untuk login via Google (Opsi B / ID-token). `client_id`
+    | juga jadi `aud` yang divalidasi saat memverifikasi id_token. `redirect`
+    | hanya relevan bila kelak memakai Opsi A (Authorization Code).
+    |
+    */
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Open-Meteo (Integration-Weather)
     |--------------------------------------------------------------------------
     |
