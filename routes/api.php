@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CropTemplateController;
+use App\Http\Controllers\CycleController;
 use App\Http\Controllers\MyFieldController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/myfields/{id}', [MyFieldController::class, 'show']);
     Route::put('/myfields/{id}', [MyFieldController::class, 'update']); // POST + _method=PUT (multipart) didukung otomatis
     Route::delete('/myfields/{id}', [MyFieldController::class, 'destroy']);
+
+    // Siklus tanam (cycles) pada lahan milik user.
+    Route::get('/cycles', [CycleController::class, 'index']);
+    Route::post('/cycles', [CycleController::class, 'store']);
 
     // Endpoint bawaan (kompatibilitas) — user yang sedang login.
     Route::get('/user', fn (Request $request) => $request->user());
