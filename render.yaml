@@ -1,0 +1,88 @@
+# Render Blueprint — AgriCloud backend (Laravel 12 + PostgreSQL).
+# Deploy: di dashboard Render → "New" → "Blueprint" → pilih repo ini.
+# Var bertanda `sync: false` HARUS diisi manual di dashboard (rahasia).
+
+databases:
+  - name: agricloud-db
+    plan: free
+    databaseName: agricloud_v2
+    user: agricloud
+
+services:
+  - type: web
+    name: agricloud-api
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: AgriCloud
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      # Isi setelah service dibuat (URL Render-nya), mis. https://agricloud-api.onrender.com
+      - key: APP_URL
+        sync: false
+      # Generate sekali: `php artisan key:generate --show`, lalu paste di dashboard.
+      - key: APP_KEY
+        sync: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: error
+
+      # --- Database: ambil otomatis dari Postgres di atas -------------------
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_URL
+        fromDatabase:
+          name: agricloud-db
+          property: connectionString
+
+      # --- Session / cache / queue (database = persisten lintas restart) ----
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+
+      # --- Frontend & CORS --------------------------------------------------
+      # URL web dashboard yang boleh akses API (dipakai config/cors.php).
+      - key: APP_FRONTEND_URL
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+
+      # --- Google OAuth (Socialite) ----------------------------------------
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+
+      # --- Email (Brevo SMTP) ----------------------------------------------
+      - key: MAIL_MAILER
+        value: smtp
+      - key: MAIL_HOST
+        value: smtp-relay.brevo.com
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_ENCRYPTION
+        value: tls
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_FROM_ADDRESS
+        sync: false
+      - key: MAIL_FROM_NAME
+        value: AgriCloud
+
+      # --- Token Sanctum ----------------------------------------------------
+      - key: AGRICLOUD_TOKEN_TTL_DEFAULT
+        value: "1440"
+      - key: AGRICLOUD_TOKEN_TTL_REMEMBER
+        value: "43200"
