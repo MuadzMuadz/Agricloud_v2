@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CropTemplateController;
 use App\Http\Controllers\CycleController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\MyFieldController;
@@ -42,8 +43,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/warehouses/{id}/movements', [MovementController::class, 'index']);
     Route::post('/movements', [MovementController::class, 'store']);
 
-    // Tindakan Hari Ini (computed) — owner-scoped.
+    // Tindakan Hari Ini (computed) & ringkasan KPI dashboard — owner-scoped.
     Route::get('/tasks', [TaskController::class, 'index']);
+    Route::get('/dashboard/summary', [DashboardController::class, 'summary']);
 
     // Endpoint bawaan (kompatibilitas) — user yang sedang login.
     Route::get('/user', fn (Request $request) => $request->user());
